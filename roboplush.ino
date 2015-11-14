@@ -7,10 +7,10 @@ int pos1 = 0;
 int pos2 = 30;
 long interval = 15;
 
-//vibrate motor
+//vibration motor
 int vibrate = 4;
 
-//fsr
+//touch sensor
 const int fsrTummy = A4; 
 int fsrTummyValue = 0;
 const int fsrHead = A5;
@@ -25,13 +25,12 @@ int xValue = 0;
 int yValue = 0;
 int zValue = 0;
 int slpPin = 2;
-
 int yPrevious = 0;
 
 //eyes
 const int eyes = 6;
 
-//matrix
+//mouth matrix
 int outTop = 13;
 int outBottom = 12;
 int in1 = 11;
@@ -44,7 +43,6 @@ int in5 = 7;
 unsigned long time;
 long timePrevious = 0;
 long timeDiff;
-
 int t = 0; //iterator for servo delay
 int motorSteps = 0;
 
@@ -89,45 +87,31 @@ void loop() {
   yValue = analogRead(yIn);
   zValue = analogRead(zIn); 
   
-  Serial.println(yValue);
-  
   //eyes are on always
   digitalWrite(eyes, HIGH);
- 
   
   if (fsrTummyValue > 50) {
     tickleState = !tickleState;
-    Serial.println(""); 
     time = millis();
-//    Serial.print("FSR Tummy: ");
-//    Serial.println(fsrTummyValue);
-//    Serial.print("Time Previous: ");
-//    Serial.println(timePrevious);
     
     int timeDiff = (time-timePrevious);
-//    Serial.print("Time: ");
-//    Serial.println(time);
-//
-//    Serial.print("TimeDiff: ");
-//    Serial.println(timeDiff);
-   
-   //checking interval
-      if ( timeDiff < 1000) {
-        
-        tickleState = HIGH;
-        for(int i = 0; i < 3; i++) {
-             laugh();
-         }
+    
+    //checking interval
+    if ( timeDiff < 1000) {
+      tickleState = HIGH;
+      for(int i = 0; i < 3; i++) {
+        laugh();
       }
-      else {
-        tickleState = LOW;
-        neutral();
-      }          
     }
+    else {
+      tickleState = LOW;
+      neutral();
+    }          
+  }
   delay(100);
   
   //head pat
-   if (fsrHeadValue > 50) {  
+  if (fsrHeadValue > 50) {  
     happy();
   }
   
@@ -137,7 +121,7 @@ void loop() {
   }
   if (xValue < 600) {
     neutral();
-   }
+  }
   
   //shake
   if (yPrevious - yValue > 300){
@@ -153,9 +137,8 @@ void loop() {
 
 
 
-void neutral(){
-      
-  digitalWrite(in1, HIGH);   // turn the LED on (HIGH is the voltage level)
+void neutral(){ 
+  digitalWrite(in1, HIGH);// turn the LED on (HIGH is the voltage level)
   digitalWrite(in2, HIGH);
   digitalWrite(in3, HIGH);
   digitalWrite(in4, HIGH);
@@ -165,74 +148,70 @@ void neutral(){
 }
 
 void sad(){
-    for (int i = 0; i < 2000; i++) {   
-      //vibrate!!!     
-      digitalWrite(vibrate, HIGH);
-      
-      digitalWrite(in1, HIGH);   // turn the LED on (HIGH is the voltage level)
-      digitalWrite(in2, LOW);
-      digitalWrite(in3, LOW);
-      digitalWrite(in4, LOW);
-      digitalWrite(in5, HIGH);
-      digitalWrite(outTop, LOW);
-      digitalWrite(outBottom, HIGH);
-      delay(1);
+  for (int i = 0; i < 2000; i++) {   
+    //vibrate!!!     
+    digitalWrite(vibrate, HIGH);
+    
+    digitalWrite(in1, HIGH);// turn the LED on (HIGH is the voltage level)
+    digitalWrite(in2, LOW);
+    digitalWrite(in3, LOW);
+    digitalWrite(in4, LOW);
+    digitalWrite(in5, HIGH);
+    digitalWrite(outTop, LOW);
+    digitalWrite(outBottom, HIGH);
+    delay(1);
+   
+    digitalWrite(in1, LOW);// turn the LED on (HIGH is the voltage level)
+    digitalWrite(in2, HIGH);
+    digitalWrite(in3, HIGH);
+    digitalWrite(in4, HIGH);
+    digitalWrite(in5, LOW);
+    digitalWrite(outTop, HIGH);
+    digitalWrite(outBottom, LOW);
+    delay(1); 
      
-      digitalWrite(in1, LOW);   // turn the LED on (HIGH is the voltage level)
-      digitalWrite(in2, HIGH);
-      digitalWrite(in3, HIGH);
-      digitalWrite(in4, HIGH);
-      digitalWrite(in5, LOW);
-      digitalWrite(outTop, HIGH);
-      digitalWrite(outBottom, LOW);
-      delay(1); 
-       
-    }
+  }
 }
 
 void happy (){
-           for (int i = 0; i < 3000; i++) {  
+  for (int i = 0; i < 3000; i++) {  
+    digitalWrite(in1, HIGH);  
+    digitalWrite(in2, LOW);
+    digitalWrite(in3, LOW);
+    digitalWrite(in4, LOW);
+    digitalWrite(in5, HIGH);
+    digitalWrite(outTop, HIGH);
+    digitalWrite(outBottom, LOW);
+    delay(1); 
     
-              digitalWrite(in1, HIGH);  
-              digitalWrite(in2, LOW);
-              digitalWrite(in3, LOW);
-              digitalWrite(in4, LOW);
-              digitalWrite(in5, HIGH);
-              digitalWrite(outTop, HIGH);
-              digitalWrite(outBottom, LOW);
-              delay(1); 
-              
-              digitalWrite(in1, LOW); 
-              digitalWrite(in2, HIGH);
-              digitalWrite(in3, HIGH);
-              digitalWrite(in4, HIGH);
-              digitalWrite(in5, LOW);
-              digitalWrite(outTop, LOW);
-              digitalWrite(outBottom, HIGH);
-              delay(1);
-          }
+    digitalWrite(in1, LOW); 
+    digitalWrite(in2, HIGH);
+    digitalWrite(in3, HIGH);
+    digitalWrite(in4, HIGH);
+    digitalWrite(in5, LOW);
+    digitalWrite(outTop, LOW);
+    digitalWrite(outBottom, HIGH);
+    delay(1);
+  }
 }
 
 void laugh(){
   t = 0;
   motorSteps = 0;
   
-    //for (int i = 0; i < 30; i++) {
-    while(motorSteps < 30){  
-  
-          
-        pos1 = 0 + motorSteps;              // servo1 from 30 to 0 degrees
-        pos2 = 30 - motorSteps;           // servo2 from 0 to 30 degrees
-        
-        if(t == 0){
+  for (int i = 0; i < 30; i++) {
+    while(motorSteps < 30) {        
+      pos1 = 0 + motorSteps; // servo1 from 30 to 0 degrees
+      pos2 = 30 - motorSteps; // servo2 from 0 to 30 degrees
+    
+      if(t == 0){
         myservo.write(pos1);
         myservoTwo.write(pos2);
-       motorSteps = motorSteps +1; 
-        }
-        t = (t+1) % 10;
-        //delay(10);
+        motorSteps = motorSteps +1; 
+      }
+    
+      t = (t+1) % 10;
 
-      
       digitalWrite(in1, HIGH);  
       digitalWrite(in2, LOW);
       digitalWrite(in3, LOW);
@@ -250,8 +229,8 @@ void laugh(){
       digitalWrite(outTop, LOW);
       digitalWrite(outBottom, HIGH);
       delay(1);
-    }
-       
+    }  
+  }
 }
 
 
